@@ -118,6 +118,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON Couriers TO manager;
 GRANT SELECT, INSERT, UPDATE, DELETE ON Shipments TO manager;
 GRANT SELECT, INSERT, UPDATE, DELETE ON Purchases TO manager;
 GRANT SELECT, INSERT, UPDATE, DELETE ON OrderLogs TO manager;
+GRANT EXECUTE ON PROCEDURE AddUser TO manager;
 
 -- Grant permissions to customer
 GRANT SELECT ON Merchants TO customer;
