@@ -55,7 +55,4 @@ ALTER TABLE `buyer` ADD CONSTRAINT `evaluate` FOREIGN KEY (`product_id`) REFEREN
 ALTER TABLE `express_station` ADD CONSTRAINT `deliver` FOREIGN KEY (`package_name`) REFERENCES `product` (`product_name`);
 ALTER TABLE `express_station` ADD CONSTRAINT `deal` FOREIGN KEY (`courier_id`) REFERENCES `after_sale` (`product_id`);
 ALTER TABLE `seller` ADD CONSTRAINT `has` FOREIGN KEY (`seller_name`) REFERENCES `product` (`product_name`);
-ALTER TABLE `express_station` ADD CONSTRAINT `deliver` FOREIGN KEY (`package_name`) REFERENCES `product` (`product_name`);
-ALTER TABLE `express_station` ADD CONSTRAINT `deal` FOREIGN KEY (`courier_id`) REFERENCES `after_sale` (`product_id`);
-ALTER TABLE `seller` ADD CONSTRAINT `has` FOREIGN KEY (`seller_name`) REFERENCES `product` (`product_name`);
 
