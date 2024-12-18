@@ -173,3 +173,115 @@ BEGIN
     JOIN Products ON Purchases.ProductID = Products.ProductID
     WHERE Purchases.UserID = userID;
 END;
+
+-- Transaction to place an order
+CREATE PROCEDURE PlaceOrder(
+    IN p_UserID INT,
+    IN p_MerchantID INT,
+    IN p_ProductID INT,
+    IN p_Quantity INT,
+    IN p_OrderDate DATE,
+    IN p_ShipmentDate DATE
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+    
+    -- Insert order
+    INSERT INTO Orders (MerchantID, UserID, OrderDate) VALUES (p_MerchantID, p_UserID, p_OrderDate);
+    SET @OrderID = LAST_INSERT_ID();
+    
+    -- Insert order details
+    INSERT INTO OrderDetails (OrderID, ProductID, Quantity) VALUES (@OrderID, p_ProductID, p_Quantity);
+    
+    -- Insert shipment
+    INSERT INTO Shipments (OrderID, CourierID, ShipmentDate) VALUES (@OrderID, 1, p_ShipmentDate);
+
+    COMMIT;
+END;
+
+-- Transaction to update product price
+CREATE PROCEDURE UpdateProductPrice(
+    IN p_ProductID INT,
+    IN p_NewPrice DECIMAL(10, 2)
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+    
+    -- Update product price
+    UPDATE Products SET Price = p_NewPrice WHERE ProductID = p_ProductID;
+
+    COMMIT;
+END;
+
+-- Transaction to process a purchase
+CREATE PROCEDURE ProcessPurchase(
+    IN p_UserID INT,
+    IN p_ProductID INT,
+    IN p_Quantity INT,
+    IN p_PurchaseDate DATE
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+    
+    -- Insert purchase
+    INSERT INTO Purchases (UserID, ProductID, PurchaseDate, Quantity) VALUES (p_UserID, p_ProductID, p_PurchaseDate, p_Quantity);
+    
+    -- Update product quantity
+    UPDATE Products SET Quantity = Quantity - p_Quantity WHERE ProductID = p_ProductID;
+
+    COMMIT;
+END;
+
+-- Transaction to add a new user
+CREATE PROCEDURE AddUser(
+    IN p_UserName VARCHAR(100)
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+    
+    -- Insert user
+    INSERT INTO Users (UserName) VALUES (p_UserName);
+
+    COMMIT;
+END;
+
+-- Transaction to log order changes
+CREATE PROCEDURE LogOrderChange(
+    IN p_OrderID INT,
+    IN p_OldMerchantID INT,
+    IN p_NewMerchantID INT
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+    
+    -- Insert log
+    INSERT INTO OrderLogs (OrderID, OldMerchantID, NewMerchantID, ChangeDate) 
+    VALUES (p_OrderID, p_OldMerchantID, p_NewMerchantID, NOW());
+
+    COMMIT;
+END;
