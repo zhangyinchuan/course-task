@@ -104,24 +104,6 @@ BEGIN
     VALUES (OLD.OrderID, OLD.MerchantID, NEW.MerchantID, NOW());
 END;
 
--- Transaction to add a new user
-CREATE PROCEDURE AddUser(
-    IN p_UserName VARCHAR(100)
-)
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-    END;
-
-    START TRANSACTION;
-    
-    -- Insert user
-    INSERT INTO Users (UserName) VALUES (p_UserName);
-
-    COMMIT;
-END;
-
 -- User roles and permissions
 CREATE ROLE manager;
 CREATE ROLE customer;
@@ -136,7 +118,6 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON Couriers TO manager;
 GRANT SELECT, INSERT, UPDATE, DELETE ON Shipments TO manager;
 GRANT SELECT, INSERT, UPDATE, DELETE ON Purchases TO manager;
 GRANT SELECT, INSERT, UPDATE, DELETE ON OrderLogs TO manager;
-GRANT EXECUTE ON PROCEDURE AddUser TO manager;
 
 -- Grant permissions to customer
 GRANT SELECT ON Merchants TO customer;
@@ -295,6 +276,24 @@ BEGIN
     -- Insert log
     INSERT INTO OrderLogs (OrderID, OldMerchantID, NewMerchantID, ChangeDate) 
     VALUES (p_OrderID, p_OldMerchantID, p_NewMerchantID, NOW());
+
+    COMMIT;
+END;
+
+-- Transaction to add a new user
+CREATE PROCEDURE AddUser(
+    IN p_UserName VARCHAR(100)
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+    
+    -- Insert user
+    INSERT INTO Users (UserName) VALUES (p_UserName);
 
     COMMIT;
 END;
