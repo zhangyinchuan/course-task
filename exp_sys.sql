@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS `after_sale`;
 CREATE TABLE `after_sale`  (
   `product_id` int NOT NULL,
   `product_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
@@ -8,6 +9,7 @@ CREATE TABLE `after_sale`  (
   UNIQUE KEY `unique_product_id` (`product_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
+DROP TABLE IF EXISTS `buyer`;
 CREATE TABLE `buyer`  (
   `buyer_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `buyer_phone` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
@@ -17,6 +19,7 @@ CREATE TABLE `buyer`  (
   PRIMARY KEY (`buyer_phone` DESC, `product_id` DESC) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
+DROP TABLE IF EXISTS `express_station`;
 CREATE TABLE `express_station`  (
   `courier_id` int NOT NULL,
   `courier_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
@@ -25,6 +28,7 @@ CREATE TABLE `express_station`  (
   PRIMARY KEY (`courier_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
+DROP TABLE IF EXISTS `product`;
 CREATE TABLE `product`  (
   `product_id` int NOT NULL,
   `product_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
@@ -37,6 +41,7 @@ CREATE TABLE `product`  (
   INDEX `product_name`(`product_name` ASC) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
+DROP TABLE IF EXISTS `seller`;
 CREATE TABLE `seller`  (
   `seller_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `seller_address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
@@ -47,6 +52,9 @@ CREATE TABLE `seller`  (
 
 ALTER TABLE `buyer` ADD CONSTRAINT `purchase` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`);
 ALTER TABLE `buyer` ADD CONSTRAINT `evaluate` FOREIGN KEY (`product_id`) REFERENCES `after_sale` (`product_id`);
+ALTER TABLE `express_station` ADD CONSTRAINT `deliver` FOREIGN KEY (`package_name`) REFERENCES `product` (`product_name`);
+ALTER TABLE `express_station` ADD CONSTRAINT `deal` FOREIGN KEY (`courier_id`) REFERENCES `after_sale` (`product_id`);
+ALTER TABLE `seller` ADD CONSTRAINT `has` FOREIGN KEY (`seller_name`) REFERENCES `product` (`product_name`);
 ALTER TABLE `express_station` ADD CONSTRAINT `deliver` FOREIGN KEY (`package_name`) REFERENCES `product` (`product_name`);
 ALTER TABLE `express_station` ADD CONSTRAINT `deal` FOREIGN KEY (`courier_id`) REFERENCES `after_sale` (`product_id`);
 ALTER TABLE `seller` ADD CONSTRAINT `has` FOREIGN KEY (`seller_name`) REFERENCES `product` (`product_name`);
