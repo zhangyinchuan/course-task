@@ -130,6 +130,18 @@ GRANT SELECT ON Shipments TO customer;
 GRANT SELECT, INSERT ON Purchases TO customer;
 GRANT SELECT ON OrderLogs TO customer;
 
+-- Create a new user that can log in from another host
+CREATE USER 'shop_user'@'%' IDENTIFIED BY 'secure_password';
+
+-- Grant necessary privileges to the new user
+GRANT SELECT ON Merchants TO 'shop_user'@'%';
+GRANT SELECT ON Users TO 'shop_user'@'%';
+GRANT SELECT ON Products TO 'shop_user'@'%';
+GRANT SELECT, INSERT ON Purchases TO 'shop_user'@'%';
+
+-- Apply the changes
+FLUSH PRIVILEGES;
+
 CREATE PROCEDURE GetUserOrders(IN userID INT)
 BEGIN
     SELECT Orders.OrderID, Orders.OrderDate, Products.ProductName, OrderDetails.Quantity
