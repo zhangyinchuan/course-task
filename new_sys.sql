@@ -129,3 +129,47 @@ GRANT SELECT ON Couriers TO customer;
 GRANT SELECT ON Shipments TO customer;
 GRANT SELECT, INSERT ON Purchases TO customer;
 GRANT SELECT ON OrderLogs TO customer;
+
+CREATE PROCEDURE GetUserOrders(IN userID INT)
+BEGIN
+    SELECT Orders.OrderID, Orders.OrderDate, Products.ProductName, OrderDetails.Quantity
+    FROM Orders
+    JOIN OrderDetails ON Orders.OrderID = OrderDetails.OrderID
+    JOIN Products ON OrderDetails.ProductID = Products.ProductID
+    WHERE Orders.UserID = userID;
+END;
+
+CREATE PROCEDURE GetTotalQuantitySold()
+BEGIN
+    SELECT Products.ProductName, SUM(OrderDetails.Quantity) AS TotalQuantitySold
+    FROM OrderDetails
+    JOIN Products ON OrderDetails.ProductID = Products.ProductID
+    GROUP BY Products.ProductName;
+END;
+
+CREATE PROCEDURE GetTotalSalesByMerchant()
+BEGIN
+    SELECT Merchants.Name AS MerchantName, SUM(Products.Price * OrderDetails.Quantity) AS TotalSales
+    FROM Orders
+    JOIN Merchants ON Orders.MerchantID = Merchants.MerchantID
+    JOIN OrderDetails ON Orders.OrderID = OrderDetails.OrderID
+    JOIN Products ON OrderDetails.ProductID = Products.ProductID
+    GROUP BY Merchants.Name;
+END;
+
+CREATE PROCEDURE GetShipmentsByCourier(IN courierID INT)
+BEGIN
+    SELECT Shipments.ShipmentID, Shipments.ShipmentDate, Orders.OrderID
+    FROM Shipments
+    JOIN Couriers ON Shipments.CourierID = Couriers.CourierID
+    JOIN Orders ON Shipments.OrderID = Orders.OrderID
+    WHERE Couriers.CourierID = courierID;
+END;
+
+CREATE PROCEDURE GetUserPurchaseHistory(IN userID INT)
+BEGIN
+    SELECT Purchases.PurchaseID, Purchases.PurchaseDate, Products.ProductName, Purchases.Quantity
+    FROM Purchases
+    JOIN Products ON Purchases.ProductID = Products.ProductID
+    WHERE Purchases.UserID = userID;
+END;
