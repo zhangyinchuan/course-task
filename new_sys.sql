@@ -103,3 +103,29 @@ BEGIN
     INSERT INTO OrderLogs (OrderID, OldMerchantID, NewMerchantID, ChangeDate)
     VALUES (OLD.OrderID, OLD.MerchantID, NEW.MerchantID, NOW());
 END;
+
+-- User roles and permissions
+CREATE ROLE manager;
+CREATE ROLE customer;
+
+-- Grant permissions to manager
+GRANT SELECT, INSERT, UPDATE, DELETE ON Merchants TO manager;
+GRANT SELECT, INSERT, UPDATE, DELETE ON Users TO manager;
+GRANT SELECT, INSERT, UPDATE, DELETE ON Products TO manager;
+GRANT SELECT, INSERT, UPDATE, DELETE ON Orders TO manager;
+GRANT SELECT, INSERT, UPDATE, DELETE ON OrderDetails TO manager;
+GRANT SELECT, INSERT, UPDATE, DELETE ON Couriers TO manager;
+GRANT SELECT, INSERT, UPDATE, DELETE ON Shipments TO manager;
+GRANT SELECT, INSERT, UPDATE, DELETE ON Purchases TO manager;
+GRANT SELECT, INSERT, UPDATE, DELETE ON OrderLogs TO manager;
+
+-- Grant permissions to customer
+GRANT SELECT ON Merchants TO customer;
+GRANT SELECT ON Users TO customer;
+GRANT SELECT ON Products TO customer;
+GRANT SELECT, INSERT ON Orders TO customer;
+GRANT SELECT, INSERT ON OrderDetails TO customer;
+GRANT SELECT ON Couriers TO customer;
+GRANT SELECT ON Shipments TO customer;
+GRANT SELECT, INSERT ON Purchases TO customer;
+GRANT SELECT ON OrderLogs TO customer;
