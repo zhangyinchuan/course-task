@@ -104,6 +104,24 @@ BEGIN
     VALUES (OLD.OrderID, OLD.MerchantID, NEW.MerchantID, NOW());
 END;
 
+-- Transaction to add a new user
+CREATE PROCEDURE AddUser(
+    IN p_UserName VARCHAR(100)
+)
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+    
+    -- Insert user
+    INSERT INTO Users (UserName) VALUES (p_UserName);
+
+    COMMIT;
+END;
+
 -- User roles and permissions
 CREATE ROLE manager;
 CREATE ROLE customer;
@@ -256,24 +274,6 @@ BEGIN
     
     -- Update product quantity
     UPDATE Products SET Quantity = Quantity - p_Quantity WHERE ProductID = p_ProductID;
-
-    COMMIT;
-END;
-
--- Transaction to add a new user
-CREATE PROCEDURE AddUser(
-    IN p_UserName VARCHAR(100)
-)
-BEGIN
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        ROLLBACK;
-    END;
-
-    START TRANSACTION;
-    
-    -- Insert user
-    INSERT INTO Users (UserName) VALUES (p_UserName);
 
     COMMIT;
 END;
