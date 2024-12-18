@@ -297,3 +297,36 @@ BEGIN
 
     COMMIT;
 END;
+
+-- Create indexes for frequently queried columns
+CREATE INDEX idx_user_name ON Users(UserName);
+CREATE INDEX idx_product_name ON Products(ProductName);
+CREATE INDEX idx_order_date ON Orders(OrderDate);
+
+-- Optimize SELECT queries to specify needed columns
+CREATE PROCEDURE GetUserOrders(IN userID INT)
+BEGIN
+    SELECT Orders.OrderID, Orders.OrderDate, Products.ProductName, OrderDetails.Quantity
+    FROM Orders
+    JOIN OrderDetails ON Orders.OrderID = OrderDetails.OrderID
+    JOIN Products ON OrderDetails.ProductID = Products.ProductID
+    WHERE Orders.UserID = userID;
+END;
+
+-- Example of batch insert operation
+CREATE PROCEDURE BatchInsertOrders(IN orders JSON)
+BEGIN
+    DECLARE i INT DEFAULT 0;
+    DECLARE n INT;
+    SET n = JSON_LENGTH(orders);
+
+    START TRANSACTION;
+    WHILE i < n DO
+        INSERT INTO Orders (MerchantID, UserID, OrderDate)
+        VALUES (JSON_UNQUOTE(JSON_EXTRACT(orders, CONCAT('$[',i,'].MerchantID'))),
+                JSON_UNQUOTE(JSON_EXTRACT(orders, CONCAT('$[',i,'].UserID'))),
+                JSON_UNQUOTE(JSON_EXTRACT(orders, CONCAT('$[',i,'].OrderDate'))));
+        SET i = i + 1;
+    END WHILE;
+    COMMIT;
+END;
