@@ -32,11 +32,18 @@ CREATE TABLE OrderDetails (
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
 );
 
+CREATE TABLE Couriers (
+    CourierID INT PRIMARY KEY,
+    CourierName VARCHAR(100)
+);
+
 CREATE TABLE Shipments (
     ShipmentID INT PRIMARY KEY,
     OrderID INT,
+    CourierID INT,
     ShipmentDate DATE,
-    FOREIGN KEY (OrderID) REFERENCES Orders(OrderID)
+    FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),
+    FOREIGN KEY (CourierID) REFERENCES Couriers(CourierID)
 );
 
 CREATE TABLE Purchases (
@@ -57,5 +64,6 @@ INSERT INTO Products (ProductID, ProductName, Price) VALUES (1, 'Product A', 10.
 INSERT INTO Orders (OrderID, MerchantID, UserID, OrderDate) VALUES (1, 1, 1, '2024-12-18');
 INSERT INTO OrderDetails (OrderDetailID, OrderID, ProductID, Quantity) VALUES (1, 1, 1, 2);
 
-INSERT INTO Shipments (ShipmentID, OrderID, ShipmentDate) VALUES (1, 1, '2024-12-19');
+INSERT INTO Couriers (CourierID, CourierName) VALUES (1, 'Courier A');
+INSERT INTO Shipments (ShipmentID, OrderID, CourierID, ShipmentDate) VALUES (1, 1, 1, '2024-12-19');
 INSERT INTO Purchases (PurchaseID, UserID, ProductID, PurchaseDate, Quantity) VALUES (1, 1, 1, '2024-12-18', 2);
