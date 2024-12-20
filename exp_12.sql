@@ -70,3 +70,27 @@ ALTER TABLE `发货记录表` ADD CONSTRAINT `fk_发货记录表_订单表_1` FO
 ALTER TABLE `退货表` ADD CONSTRAINT `fk_退货表_订单表_1` FOREIGN KEY (`关联订单ID`) REFERENCES `订单表` (`订单ID`);
 ALTER TABLE `退货表` ADD CONSTRAINT `fk_退货表_产品表_2` FOREIGN KEY (`退货产品ID`) REFERENCES `产品表` (`产品ID`);
 ALTER TABLE `物流状态表` ADD CONSTRAINT `fk_物流状态表_订单表_1` FOREIGN KEY (`关联订单ID`) REFERENCES `订单表` (`订单ID`);
+
+-- Assuming there is a notification table to insert records into
+CREATE TABLE IF NOT EXISTS `通知表` (
+  `通知ID` int NOT NULL AUTO_INCREMENT,
+  `订单ID` int NOT NULL,
+  `通知内容` varchar(255) NOT NULL,
+  `通知时间` datetime NOT NULL,
+  PRIMARY KEY (`通知ID`)
+);
+
+DROP TRIGGER IF EXISTS `物流状态更新触发器`;
+DELIMITER //
+CREATE TRIGGER `物流状态更新触发器`
+AFTER UPDATE ON `物流状态表`
+FOR EACH ROW
+BEGIN
+  IF NEW.`当前物流状态` = '已到驿站' THEN
+    INSERT INTO `通知表` (`订单ID`, `通知内容`, `通知时间`)
+    VALUES (NEW.`关联订单ID`, '您的订单已到驿站', NOW());
+  END IF;
+END;
+//
+DELIMITER ;
+
