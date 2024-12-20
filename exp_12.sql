@@ -94,3 +94,25 @@ END;
 //
 DELIMITER ;
 
+-- Assuming there is a table to store the pickup times
+CREATE TABLE IF NOT EXISTS `取件记录表` (
+  `取件ID` int NOT NULL AUTO_INCREMENT,
+  `订单ID` int NOT NULL,
+  `取件时间` datetime NOT NULL,
+  PRIMARY KEY (`取件ID`)
+);
+
+DROP TRIGGER IF EXISTS `订单状态更新触发器`;
+DELIMITER //
+CREATE TRIGGER `订单状态更新触发器`
+AFTER UPDATE ON `订单表`
+FOR EACH ROW
+BEGIN
+  IF NEW.`订单状态` = '已取件' THEN
+    INSERT INTO `取件记录表` (`订单ID`, `取件时间`)
+    VALUES (NEW.`订单ID`, NOW());
+  END IF;
+END;
+//
+DELIMITER ;
+
