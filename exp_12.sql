@@ -116,3 +116,26 @@ END;
 //
 DELIMITER ;
 
+-- Assuming there is a table to store the inventory change logs
+CREATE TABLE IF NOT EXISTS `库存变动日志` (
+  `日志ID` int NOT NULL AUTO_INCREMENT,
+  `产品ID` int NOT NULL,
+  `变动前库存` varchar(255) NOT NULL,
+  `变动后库存` varchar(255) NOT NULL,
+  `变动时间` datetime NOT NULL,
+  PRIMARY KEY (`日志ID`)
+);
+
+DROP TRIGGER IF EXISTS `库存更新触发器`;
+DELIMITER //
+CREATE TRIGGER `库存更新触发器`
+AFTER UPDATE ON `产品表`
+FOR EACH ROW
+BEGIN
+  IF NEW.`库存数量` <> OLD.`库存数量` THEN
+    INSERT INTO `库存变动日志` (`产品ID`, `变动前库存`, `变动后库存`, `变动时间`)
+    VALUES (NEW.`产品ID`, OLD.`库存数量`, NEW.`库存数量`, NOW());
+  END IF;
+END;
+//
+DELIMITER ;
