@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS `产品表`;
 CREATE TABLE `产品表`  (
   `产品ID` int NOT NULL,
   `产品名称` varchar(255) NOT NULL,
@@ -5,6 +6,7 @@ CREATE TABLE `产品表`  (
   PRIMARY KEY (`产品ID`)
 );
 
+DROP TABLE IF EXISTS `订单表`;
 CREATE TABLE `订单表`  (
   `订单ID` int NOT NULL,
   `客户ID` int NOT NULL,
@@ -13,6 +15,7 @@ CREATE TABLE `订单表`  (
   PRIMARY KEY (`订单ID`)
 );
 
+DROP TABLE IF EXISTS `订单详情表`;
 CREATE TABLE `订单详情表`  (
   `订单详情ID` int NOT NULL,
   `关联订单ID` int NOT NULL,
@@ -22,6 +25,7 @@ CREATE TABLE `订单详情表`  (
   PRIMARY KEY (`订单详情ID`)
 );
 
+DROP TABLE IF EXISTS `发货记录表`;
 CREATE TABLE `发货记录表`  (
   `发货ID` int NOT NULL,
   `关联订单ID` int NOT NULL,
@@ -30,6 +34,7 @@ CREATE TABLE `发货记录表`  (
   PRIMARY KEY (`发货ID`)
 );
 
+DROP TABLE IF EXISTS `客户表`;
 CREATE TABLE `客户表`  (
   `客户ID` int NOT NULL,
   `客户名称` varchar(255) NOT NULL,
@@ -37,6 +42,7 @@ CREATE TABLE `客户表`  (
   PRIMARY KEY (`客户ID`)
 );
 
+DROP TABLE IF EXISTS `退货表`;
 CREATE TABLE `退货表`  (
   `退货ID` int NOT NULL,
   `关联订单ID` int NOT NULL,
@@ -47,6 +53,7 @@ CREATE TABLE `退货表`  (
   PRIMARY KEY (`退货ID`)
 );
 
+DROP TABLE IF EXISTS `物流状态表`;
 CREATE TABLE `物流状态表`  (
   `状态ID` int NOT NULL,
   `关联订单ID` int NOT NULL,
@@ -56,7 +63,6 @@ CREATE TABLE `物流状态表`  (
   PRIMARY KEY (`状态ID`)
 );
 
-
 ALTER TABLE `订单表` ADD CONSTRAINT `fk_订单表_客户表_1` FOREIGN KEY (`客户ID`) REFERENCES `客户表` (`客户ID`);
 ALTER TABLE `订单详情表` ADD CONSTRAINT `fk_订单详情表_订单表_1` FOREIGN KEY (`关联订单ID`) REFERENCES `订单表` (`订单ID`);
 ALTER TABLE `订单详情表` ADD CONSTRAINT `fk_订单详情表_产品表_2` FOREIGN KEY (`商品ID`) REFERENCES `产品表` (`产品ID`);
@@ -64,4 +70,3 @@ ALTER TABLE `发货记录表` ADD CONSTRAINT `fk_发货记录表_订单表_1` FO
 ALTER TABLE `退货表` ADD CONSTRAINT `fk_退货表_订单表_1` FOREIGN KEY (`关联订单ID`) REFERENCES `订单表` (`订单ID`);
 ALTER TABLE `退货表` ADD CONSTRAINT `fk_退货表_产品表_2` FOREIGN KEY (`退货产品ID`) REFERENCES `产品表` (`产品ID`);
 ALTER TABLE `物流状态表` ADD CONSTRAINT `fk_物流状态表_订单表_1` FOREIGN KEY (`关联订单ID`) REFERENCES `订单表` (`订单ID`);
-
