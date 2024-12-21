@@ -86,7 +86,7 @@ CREATE TRIGGER `物流状态更新触发器`
 AFTER UPDATE ON `物流状态表`
 FOR EACH ROW
 BEGIN
-  IF NEW.`当前物流状态` = '已到驿站' THEN
+  IF NEW.`当前物流状态` = '已到站' THEN
     INSERT INTO `通知表` (`订单ID`, `通知内容`, `通知时间`)
     VALUES (NEW.`关联订单ID`, '您的订单已到驿站', NOW());
   END IF;
