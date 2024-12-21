@@ -177,3 +177,41 @@ FROM `订单表`
 JOIN `物流状态表` ON `订单表`.`订单ID` = `物流状态表`.`关联订单ID`
 ORDER BY `订单表`.`订单ID`, `物流状态表`.`更新时间`;
 
+-- 1. 客户表插入触发器
+DROP TRIGGER IF EXISTS `客户插入触发器`;
+DELIMITER //
+CREATE TRIGGER `客户插入触发器`
+AFTER INSERT ON `客户表`
+FOR EACH ROW
+BEGIN
+    INSERT INTO `日志表` (`操作类型`, `表名`, `记录ID`, `操作时间`)
+    VALUES ('INSERT', '客户表', NEW.`客户ID`, NOW());
+END;
+//
+DELIMITER ;
+
+-- 2. 订单表删除触发器
+DROP TRIGGER IF EXISTS `订单删除触发器`;
+DELIMITER //
+CREATE TRIGGER `订单删除触发器`
+AFTER DELETE ON `订单表`
+FOR EACH ROW
+BEGIN
+    INSERT INTO `日志表` (`操作类型`, `表名`, `记录ID`, `操作时间`)
+    VALUES ('DELETE', '订单表', OLD.`订单ID`, NOW());
+END;
+//
+DELIMITER ;
+
+-- 3. 产品表更新触发器
+DROP TRIGGER IF EXISTS `产品更新触发器`;
+DELIMITER //
+CREATE TRIGGER `产品更新触发器`
+AFTER UPDATE ON `产品表`
+FOR EACH ROW
+BEGIN
+    INSERT INTO `日志表` (`操作类型`, `表名`, `记录ID`, `操作时间`)
+    VALUES ('UPDATE', '产品表', NEW.`产品ID`, NOW());
+END;
+//
+DELIMITER ;
